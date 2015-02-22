@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"time"
 
 	"github.com/supershabam/mgom"
 	"gopkg.in/mgo.v2"
@@ -11,6 +12,13 @@ import (
 var (
 	url = flag.String("url", "", "mongodb url")
 )
+
+// Sample is a metric datapoint
+type Sample struct {
+	Name  string    `bson:"name"`
+	Value float64   `bson:"value"`
+	At    time.Time `bson:"at"`
+}
 
 func main() {
 	flag.Parse()
@@ -25,8 +33,14 @@ func main() {
 		log.Fatal(err)
 	}
 	opch, errc := mgom.Inserts(session, last, "test.jerks")
+	var sample Sample
 	for op := range opch {
+		err := op.Object.Unmarshal(&sample)
+		if err != nil {
+			log.Fatal(err)
+		}
 		log.Printf("op: %+v", op)
+		log.Printf("sample: %+v", sample)
 	}
 	err = <-errc
 	if err != nil {

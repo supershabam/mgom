@@ -14,8 +14,8 @@ type Oplog struct {
 	MongoVersion int                 `bson:"v"`
 	Operation    string              `bson:"op"`
 	Namespace    string              `bson:"ns"`
-	Object       bson.RawD           `bson:"o"`
-	QueryObject  bson.RawD           `bson:"o2"`
+	Object       bson.Raw            `bson:"o"`
+	QueryObject  bson.Raw            `bson:"o2"`
 }
 
 // Last returns the timestamp of the last seen oplog at the time of making this
