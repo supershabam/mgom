@@ -1,6 +1,12 @@
-# mgom
+# monup
 
-[EXPERIMENT] mongo metric rollup system
+[EXPERIMENT] mongo metric rollups by tailing the oplog
+
+# summary
+
+The `marker` process tails the MongoDB oplog to record when a new metric dirties a rollup of that metric and needs to be computed (and also when the earliest date it can be computed).
+
+The `rollup` process polls the triggered marks to compute a rollup, on what metric, and over what time range.
 
 ## objects
 
