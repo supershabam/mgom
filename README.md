@@ -25,3 +25,29 @@ marker -url="mongodb://localhost" -ns="metrics.samples" -tns="metrics.triggers" 
 
 roller -url="mongodb://localhost" -ns="metrics.samples" -tns="metrics.triggers"
 ```
+
+## what you get
+
+Now, with the marker and roller services running, whenever you write a datapoint document into the samples collection, you'll get a rollup computed.
+
+```
+// insert datapoint by any application
+db.samples.insert({
+  name: 'http.request_ms',
+  at: new Date(),
+  value: 233
+})
+
+// rollups are automatically created
+db.samples_5m.find({name: 'http.request_ms'})
+db.samples_15m.find({name: 'http.request_ms'})
+db.samples_1h.find({name: 'http.request_ms'})
+```
+
+## MongoDB collection setup
+
+`metrics.samples` should be a capped collection with enough space to hold all your different metric names for 3x the length of your longest rollup window.
+
+`metrics.samples` should have an index on `{name: 1, at: 1}`
+
+`metrics.triggers` should have an index on `{name: 1, at: 1, over: 1}`
