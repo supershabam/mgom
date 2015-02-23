@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/supershabam/mgom"
+	"github.com/supershabam/monup"
 	"gopkg.in/mgo.v2"
 )
 
@@ -41,7 +41,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	marker := mgom.Marker{
+	marker := monup.Marker{
 		Sess:             sess,
 		Namespace:        *ns,
 		Over:             overDurs,

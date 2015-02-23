@@ -1,4 +1,4 @@
-package mgom
+package monup
 
 // Datapoint exists to ease parsing out of MongoDB
 type Datapoint struct {

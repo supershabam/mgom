@@ -1,4 +1,4 @@
-package mgom
+package monup
 
 import (
 	"log"

@@ -1,4 +1,4 @@
-package mgom
+package monup
 
 import "time"
 
@@ -6,6 +6,7 @@ import "time"
 type Rollup struct {
 	Name string    `bson:"name"`
 	At   time.Time `bson:"at"`
+	Min  float64   `bson:"min"`
 	P2   float64   `bson:"p2"`
 	P9   float64   `bson:"p9"`
 	P25  float64   `bson:"p25"`
@@ -13,4 +14,5 @@ type Rollup struct {
 	P75  float64   `bson:"p75"`
 	P91  float64   `bson:"p91"`
 	P98  float64   `bson:"p98"`
+	Max  float64   `bson:"max"`
 }

@@ -1,4 +1,4 @@
-package mgom
+package monup
 
 import (
 	"fmt"
@@ -68,6 +68,7 @@ func (r Roller) Rollup(trigger Trigger) error {
 	rollup := Rollup{
 		Name: trigger.Name,
 		At:   trigger.At,
+		Min:  stat.Quantile(0.0, stat.Empirical, x, nil),
 		P2:   stat.Quantile(0.02, stat.Empirical, x, nil),
 		P9:   stat.Quantile(0.09, stat.Empirical, x, nil),
 		P25:  stat.Quantile(0.25, stat.Empirical, x, nil),
@@ -75,6 +76,7 @@ func (r Roller) Rollup(trigger Trigger) error {
 		P75:  stat.Quantile(0.75, stat.Empirical, x, nil),
 		P91:  stat.Quantile(0.91, stat.Empirical, x, nil),
 		P98:  stat.Quantile(0.98, stat.Empirical, x, nil),
+		Max:  stat.Quantile(1.0, stat.Empirical, x, nil),
 	}
 	_, err = dest.Upsert(bson.M{"name": rollup.Name, "at": rollup.At}, rollup)
 	if err != nil {

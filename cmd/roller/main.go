@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/supershabam/mgom"
+	"github.com/supershabam/monup"
 	"gopkg.in/mgo.v2"
 )
 
@@ -24,7 +24,7 @@ func main() {
 	sess.SetMode(mgo.Eventual, true)
 	defer sess.Close()
 
-	roller := mgom.Roller{
+	roller := monup.Roller{
 		Sess:             sess,
 		Namespace:        *ns,
 		TriggerNamespace: *tns,
