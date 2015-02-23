@@ -1,8 +1,6 @@
 package mgom
 
 import (
-	"time"
-
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -18,17 +16,19 @@ type Oplog struct {
 	QueryObject  bson.Raw            `bson:"o2"`
 }
 
-// Last returns the timestamp of the last seen oplog at the time of making this
-// query
-func Last(session *mgo.Session) (bson.MongoTimestamp, error) {
-	var member Oplog
-	err := session.DB("local").C("oplog.rs").Find(nil).Sort("-$natural").One(&member)
-	return member.Timestamp, err
+// LatestOplog returns the most recent oplog from the database
+func LatestOplog(sess *mgo.Session) (Oplog, error) {
+	var oplog Oplog
+	err := sess.DB("local").C("oplog.rs").Find(nil).Sort("-$natural").One(&oplog)
+	return oplog, err
 }
 
-// Inserts returns a channel of insert oplogs that affect the provided namespace
-// after the provided timestamp.
-func Inserts(session *mgo.Session, after bson.MongoTimestamp, namespace string) (<-chan Oplog, <-chan error) {
+// OplogCh returns a channel of oplogs that match the given query as they come
+// into the database. If there is an error along the way, the channel is terminated
+// and there will be a non-nil error ready to take from the error channel
+//
+// TODO let caller have a way to stop iteration
+func OplogCh(sess *mgo.Session, query bson.M) (<-chan Oplog, <-chan error) {
 	out := make(chan Oplog)
 	errc := make(chan error, 1)
 	go func() {
@@ -38,15 +38,15 @@ func Inserts(session *mgo.Session, after bson.MongoTimestamp, namespace string) 
 			close(errc)
 		}()
 		defer close(out)
-		iter := session.DB("local").
+		iter := sess.DB("local").
 			C("oplog.rs").
-			Find(bson.M{"ts": bson.M{"$gt": after}, "ns": namespace, "op": "i"}).
+			Find(query).
 			Sort("$natural").
 			LogReplay().
-			Tail(time.Hour)
-		var ol Oplog
-		for iter.Next(&ol) {
-			out <- ol
+			Tail(-1) // tail forever
+		var oplog Oplog
+		for iter.Next(&oplog) {
+			out <- oplog
 		}
 		err = iter.Err()
 		if err != nil {

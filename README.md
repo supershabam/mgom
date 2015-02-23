@@ -2,8 +2,6 @@
 
 [EXPERIMENT] mongo metric rollup system
 
-
-
 ## objects
 
 ### sample
