@@ -42,10 +42,10 @@ func main() {
 		log.Fatal(err)
 	}
 	marker := mgom.Marker{
-		Sess:            sess,
-		Namespace:       *ns,
-		Over:            overDurs,
-		TargetNamespace: *tns,
+		Sess:             sess,
+		Namespace:        *ns,
+		Over:             overDurs,
+		TriggerNamespace: *tns,
 	}
 	if err := marker.Run(); err != nil {
 		log.Fatal(err)

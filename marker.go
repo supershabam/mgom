@@ -11,10 +11,10 @@ import (
 
 // Marker encapsulates the logic for running a marker
 type Marker struct {
-	Sess            *mgo.Session
-	Namespace       string
-	Over            []time.Duration
-	TargetNamespace string
+	Sess             *mgo.Session
+	Namespace        string
+	Over             []time.Duration
+	TriggerNamespace string
 }
 
 // Run executes a marker until an error is encountered
@@ -25,7 +25,7 @@ func (m Marker) Run() error {
 	}
 	query := bson.M{"ts": bson.M{"$gt": oplog.Timestamp}, "ns": m.Namespace, "op": "i"}
 	var sample Sample
-	targetParts := strings.SplitN(m.TargetNamespace, ".", 2)
+	targetParts := strings.SplitN(m.TriggerNamespace, ".", 2)
 	targetC := m.Sess.DB(targetParts[0]).C(targetParts[1])
 	oplogch, errch := OplogCh(m.Sess, query)
 	for oplog := range oplogch {
